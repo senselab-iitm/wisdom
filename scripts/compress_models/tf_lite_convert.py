@@ -12,6 +12,14 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 
 
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation has a list of file associated to it
+    - flatten: boolean value to decide it the spectograms that will be used as input needs to be flattened (a single M*N vector) or not (a MXN matrix)
+    
+:returns
+    - X_train, X_val, X_test, Y_train, Y_val, Y_test: Training, validation and testing datasets
+'''
 def load_data(annotations_for_files, flatten):
 
     X, Y = preprocess.get_annotated_csi_segments_from_esp_logs(annotations_for_files, 50, flatten)
@@ -32,14 +40,30 @@ def load_data(annotations_for_files, flatten):
     return X_train, X_val, X_test, Y_train, Y_val, Y_test
 
 
+'''
+:params
+    - tflite_model: the tflite model to be saved
+    - tflite_save_path: the path where tflite_model will be saved
+
+:returns
+    - kb_written: the size of tflite_model in KBs
+'''
 def save_tflite_model(tflite_model, tflite_save_path):
     tflite_model_filepath = pathlib.Path(tflite_save_path)
     bytes_written = tflite_model_filepath.write_bytes(tflite_model)
     print('For TFLite Model: {}, KBs written are: {}'.format(tflite_save_path, bytes_written / 1024))
+    kb_written = bytes_written / 1024
+    return kb_written
 
-    return bytes_written / 1024
 
-
+'''
+:params
+    - tflite_save_path: the path of the saved tflite model on which we want to perform test
+    - X_test, Y_test: the test data and labels to be used for testing
+    
+:returns
+    - accuracy: the accuracy of the model saved in tflite_save_path when inferred using X_test, Y_test dataset
+'''
 def infer_tflite_model(tflite_save_path, X_test, Y_test):
 
     interpreter = tf.lite.Interpreter(model_path=tflite_save_path)
@@ -67,6 +91,14 @@ def infer_tflite_model(tflite_save_path, X_test, Y_test):
     return accuracy
 
 
+'''
+:params
+    - file_path: path where we want to save the statistics (accuracy and memory) or a particular run (creating, training and compressing all possible combinations)
+    - models_names: names of the models used in the run, in the format of har_<architecture_type>_<config>. Here <config> determines the parameter size.
+    - optimizations: names of optimization techniques used in the run
+    - tflite_model_sizes: size of all the models used in the run. This is different from flash consumed.
+    - tflite_model_accuracies: size of all the models used in the run, found using infer_tflite_model
+'''
 def save_run_statistics(file_path, model_names, optimizations, tflite_model_sizes, tflite_model_accuracies):
 
     data_dict = {
@@ -82,6 +114,17 @@ def save_run_statistics(file_path, model_names, optimizations, tflite_model_size
     print('TFLite Stats saved to path: {}'.format(file_path))
 
 
+'''
+:params
+    - base_model: base Keras model on which compression needs to be performed
+    - opt_type: type of model compression to be performed on base_model
+    - X_train, Y_train, X_val, Y_val: Used for fine turning the model when further trained during compression
+    - epochs: number of additional epochs for fine tuning the model for compression
+    - model_folder: path of the folder where model should be saved
+    - model_name: name of the tflite model to be saved
+:returns
+    - tflite model: returns the tflite model generated after compressing base_model. It is also saved in model_folder/model_name file
+'''
 def apply_optimization(base_model, opt_type, X_train, Y_train, X_val, Y_val, epochs, model_folder, model_name):
 
     if opt_type == 'noopt':
@@ -185,24 +228,29 @@ def apply_optimization(base_model, opt_type, X_train, Y_train, X_val, Y_val, epo
         raise Exception('{}, no such optimization technique found'.format(opt_type))
 
 
+'''
+:params
+    - identifier: name of the run. Each run has all the combination of architecture, parameters and compression techniques
+    - flatten: whether the CSI spectrogram needs to be converted to a 1D vector or they remain a 2D matrix
+'''
 def main(identifier, flatten):
 
     annotations_for_files = {
         0: ['../data/human_activity_recognition/lab_empty_1685504223.572277.txt',
             '../data/human_activity_recognition/parking_empty_1685740580.4567273.txt',
-            '../data/human_activity_recognition/meetingroom_empty_1685749485.6155138.txt'],
+            '../data/human_activity_recognition/corridor_empty_1685749485.6155138.txt'],
         1: ['../data/human_activity_recognition/lab_standing_1685504666.5088024.txt',
             '../data/human_activity_recognition/parking_standing_1685741178.8062696.txt',
-            '../data/human_activity_recognition/meetingroom_standing_1685750223.3215554.txt'],
+            '../data/human_activity_recognition/corridor_standing_1685750223.3215554.txt'],
         2: ['../data/human_activity_recognition/lab_sitting_1685505160.02395.txt',
             '../data/human_activity_recognition/parking_sitting_1685741578.0545967.txt',
-            '../data/human_activity_recognition/meetingroom_sitting_1685751375.4694774.txt'],
+            '../data/human_activity_recognition/corridor_sitting_1685751375.4694774.txt'],
         3: ['../data/human_activity_recognition/lab_sittingupdown_1685506366.902033.txt',
             '../data/human_activity_recognition/parking_sittingupdown_1685741945.5226183.txt',
-            '../data/human_activity_recognition/meetingroom_sittingupdown_1685751017.898958.txt'],
+            '../data/human_activity_recognition/corridor_sittingupdown_1685751017.898958.txt'],
         4: ['../data/human_activity_recognition/lab_jumping_1685508067.7758608.txt',
             '../data/human_activity_recognition/parking_jumping_1685743199.2157178.txt',
-            '../data/human_activity_recognition/meetingroom_jumping_1685751761.0926085.txt'],
+            '../data/human_activity_recognition/corridor_jumping_1685751761.0926085.txt'],
         5: ['../data/human_activity_recognition/lab_walking_fast_1685507226.876064.txt',
             '../data/human_activity_recognition/parking_walking_fast_1685742761.396288.txt',
             '../data/human_activity_recognition/meetingroom_walking_fast_1685750603.6436868.txt']
