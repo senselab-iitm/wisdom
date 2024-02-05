@@ -12,6 +12,13 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 
 
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation has a list of file associated to it
+    
+:returns
+    - X_train, X_val, X_test, Y_train, Y_val, Y_test: Training, validation and testing datasets
+'''
 def load_data(annotations_for_files):
 
     X, Y = preprocess.get_annotated_csi_segments_from_esp_logs(annotations_for_files, 1, True)
@@ -42,6 +49,17 @@ def load_data(annotations_for_files):
     return X_train, X_val, X_test, Y_train, Y_val, Y_test
 
 
+'''
+:params
+    - x: input Tensor
+    - num_neuron: number of neurons in this particular layer
+    - dropout_rate: dropout rate for this layer
+    - l1l2_regularizer: L1-L2 regularize used. In case of no regularization, we will set it to None.
+
+:returns
+    - x: output Tensor. It goes through a dense layer with 'num_neuron' neurons, 'dropout_rate' dropout rate and 'l1l2_regularizer' regularizer respectively.
+    We further add batch normalization and ReLU non-linearity.
+'''
 def dense_bn_relu_drop(x: Tensor, num_neuron, dropout_rate=0.0, l1l2_regularizer=None) -> Tensor:
 
     x = Dense(num_neuron, kernel_regularizer=l1l2_regularizer)(x)
@@ -52,6 +70,17 @@ def dense_bn_relu_drop(x: Tensor, num_neuron, dropout_rate=0.0, l1l2_regularizer
     return x
 
 
+'''
+:params
+    - input_shape: shape of the input to the model (vector of size number of packets * subcarriers)
+    - num_classes: number of classes for classification task. For HAR there are 6 classes
+    - num_neuron_list: list of number. Each number is the number of neurons in a layer.
+    For e.g. [50, 100, 100, 50] has 4 layers with 50, 100, 100, 50 neurons respectively. With an additional softmax layer for output
+    - dropout_rate: dropout probability used in the layers
+
+:returns
+    - model: The final fully connected model
+'''
 def create_fc_model(input_shape, num_classes, num_neuron_list, dropout_rate=0.0):
 
     l1l2_regularizer = L1L2(l1=1e-5, l2=1e-4)
@@ -77,6 +106,14 @@ def create_fc_model(input_shape, num_classes, num_neuron_list, dropout_rate=0.0)
     return model
 
 
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation corresponds to a list of files that have the esp logs
+    - model_formats: list of CNN model formats i.e., a list of num_blocks_list for create_res_net
+    - application: application name i.e., har in our case. Used for naming the models
+    - save_model_folder_path: path to the folder where the model will be saved
+    - save_result_file_path: path to the file where we save the results i.e., model name with the accuracy it achieved
+'''
 def main(annotations_for_files, model_formats, application, save_model_folder_path, save_result_file_path):
 
     X_train, X_val, X_test, Y_train, Y_val, Y_test = load_data(annotations_for_files)

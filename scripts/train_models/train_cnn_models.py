@@ -10,7 +10,13 @@ from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 
-
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation has a list of file associated to it
+    
+:returns
+    - X_train, X_val, X_test, Y_train, Y_val, Y_test: Training, validation and testing datasets
+'''
 def load_data(annotations_for_files):
 
     X, Y = preprocess.get_annotated_csi_segments_from_esp_logs(annotations_for_files, 50, False)
@@ -41,6 +47,13 @@ def load_data(annotations_for_files):
     return X_train, X_val, X_test, Y_train, Y_val, Y_test
 
 
+'''
+:params
+    - inputs: an input tensorflow Tensor
+    
+:returns
+    - bn: pass the input Tensor through a layer of ReLU non-linearity and then batch normalization
+'''
 def relu_bn(inputs: Tensor) -> Tensor:
 
     relu = ReLU()(inputs)
@@ -49,6 +62,17 @@ def relu_bn(inputs: Tensor) -> Tensor:
     return bn
 
 
+'''
+:params
+    - x: input Tensor
+    - downsample: If true the output tensor size is halved, else it remains the same
+    - filters: number of filters for each convolutional layer
+    - kernel_size: the size of each filter, for e.g., 3 means a 3X3 filter
+    
+:returns
+    - out: Tensor x, after it passes through 2 covnolutional layer with one ReLU and batch normalization layer in between.
+    This is then added back with x (skip connection). In case we are down sampling the skip connection also has a convolutional layer to match the dimensions.
+'''
 def residual_block(x: Tensor, downsample: bool, filters: int, kernel_size: int = 3) -> Tensor:
 
     y = Conv2D(kernel_size=kernel_size,
@@ -72,7 +96,17 @@ def residual_block(x: Tensor, downsample: bool, filters: int, kernel_size: int =
 
     return out
 
-
+'''
+:params
+    - input_shape: shape of the input to the model (number of packets X subcarriers)
+    - initial_num_filters: initial number of filters. Filters increases as the number of convolutional blocks increases
+    - num_classes: number of classes for classification task. For HAR there are 6 classes
+    - num_blocks_list: list of number. Each number is the number of blocks after which number of filters double.
+    For e.g. [1, 2, 1] double filter after one block, then double filter after two blocks, then finally double filter after the last block
+    
+:returns
+    - model: The final resnet-like model. The final model consists of a global average pooling with softmax for output.
+'''
 def create_res_net(input_shape, initial_num_filters, num_classes, num_blocks_list):
 
     inputs = Input(shape=input_shape)
@@ -104,6 +138,14 @@ def create_res_net(input_shape, initial_num_filters, num_classes, num_blocks_lis
     return model
 
 
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation corresponds to a list of files that have the esp logs
+    - model_formats: list of CNN model formats i.e., a list of num_blocks_list for create_res_net
+    - application: application name i.e., har in our case. Used for naming the models
+    - save_model_folder_path: path to the folder where the model will be saved
+    - save_result_file_path: path to the file where we save the results i.e., model name with the accuracy it achieved
+'''
 def main(annotations_for_files, model_formats, application, save_model_folder_path, save_result_file_path):
 
     X_train, X_val, X_test, Y_train, Y_val, Y_test = load_data(annotations_for_files)

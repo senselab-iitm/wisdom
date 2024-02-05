@@ -9,7 +9,13 @@ from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation has a list of file associated to it
 
+:returns
+    - X_train, X_val, X_test, Y_train, Y_val, Y_test: Training, validation and testing datasets
+'''
 def load_data(annotations_for_files):
 
     X, Y = preprocess.get_annotated_csi_segments_from_esp_logs(annotations_for_files, 50, False)
@@ -40,6 +46,15 @@ def load_data(annotations_for_files):
     return X_train, X_val, X_test, Y_train, Y_val, Y_test
 
 
+'''
+:params
+    - input_shape: shape of the input to the model (number of packets X subcarriers)
+    - num_classes: number of classes for classification task. For HAR there are 6 classes
+    - units: list of number. Each number is the dimensionality of the output space for a LSTM cell
+
+:returns
+    - model: The final LSTM model
+'''
 def create_rnn(input_shape, num_classes, units):
     inputs = Input(shape=input_shape)
     t = BatchNormalization()(inputs)
@@ -60,6 +75,14 @@ def create_rnn(input_shape, num_classes, units):
     return model
 
 
+'''
+:params
+    - annotations_for_files: list of annotations, where each annotation corresponds to a list of files that have the esp logs
+    - model_formats: list of CNN model formats i.e., a list of num_blocks_list for create_res_net
+    - application: application name i.e., har in our case. Used for naming the models
+    - save_model_folder_path: path to the folder where the model will be saved
+    - save_result_file_path: path to the file where we save the results i.e., model name with the accuracy it achieved
+'''
 def main(annotations_for_files, model_formats, application, save_model_folder_path, save_result_file_path):
 
     X_train, X_val, X_test, Y_train, Y_val, Y_test = load_data(annotations_for_files)
