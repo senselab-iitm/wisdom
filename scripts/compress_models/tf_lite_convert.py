@@ -73,14 +73,11 @@ def infer_tflite_model(tflite_save_path, X_test, Y_test):
     output_details = interpreter.get_output_details()
 
     Y_test_hat_lite = []
-    X_test = (X_test/input_details[0]['quantization_parameters']['scales'][0]) + input_details[0]['quantization_parameters']['zero_points'][0]
     X_test_lite = X_test.astype(input_details[0]['dtype'])
     for x in X_test_lite:
         interpreter.set_tensor(input_details[0]['index'], np.reshape(x, input_details[0]['shape']))
         interpreter.invoke()
         quant_op = interpreter.get_tensor(output_details[0]['index'])[0]
-        quant_op = quant_op.astype(np.float32)
-        quant_op = (quant_op - (output_details[0]['quantization_parameters']['zero_points'][0])) * (output_details[0]['quantization_parameters']['scales'][0])
         Y_test_hat_lite.append(quant_op)
 
     Y_test_hat_lite = np.reshape(np.array(Y_test_hat_lite), Y_test.shape)
@@ -236,30 +233,30 @@ def apply_optimization(base_model, opt_type, X_train, Y_train, X_val, Y_val, epo
 def main(identifier, flatten):
 
     annotations_for_files = {
-        0: ['../data/human_activity_recognition/lab_empty_1685504223.572277.txt',
-            '../data/human_activity_recognition/parking_empty_1685740580.4567273.txt',
-            '../data/human_activity_recognition/corridor_empty_1685749485.6155138.txt'],
-        1: ['../data/human_activity_recognition/lab_standing_1685504666.5088024.txt',
-            '../data/human_activity_recognition/parking_standing_1685741178.8062696.txt',
-            '../data/human_activity_recognition/corridor_standing_1685750223.3215554.txt'],
-        2: ['../data/human_activity_recognition/lab_sitting_1685505160.02395.txt',
-            '../data/human_activity_recognition/parking_sitting_1685741578.0545967.txt',
-            '../data/human_activity_recognition/corridor_sitting_1685751375.4694774.txt'],
-        3: ['../data/human_activity_recognition/lab_sittingupdown_1685506366.902033.txt',
-            '../data/human_activity_recognition/parking_sittingupdown_1685741945.5226183.txt',
-            '../data/human_activity_recognition/corridor_sittingupdown_1685751017.898958.txt'],
-        4: ['../data/human_activity_recognition/lab_jumping_1685508067.7758608.txt',
-            '../data/human_activity_recognition/parking_jumping_1685743199.2157178.txt',
-            '../data/human_activity_recognition/corridor_jumping_1685751761.0926085.txt'],
-        5: ['../data/human_activity_recognition/lab_walking_fast_1685507226.876064.txt',
-            '../data/human_activity_recognition/parking_walking_fast_1685742761.396288.txt',
-            '../data/human_activity_recognition/meetingroom_walking_fast_1685750603.6436868.txt']
+        0: ['../../data/human_activity_recognition/indoors/lab/lab_empty_1685504223.572277.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_empty_1685740580.4567273.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_empty_1685749485.6155138.txt'],
+        1: ['../../data/human_activity_recognition/indoors/lab/lab_standing_1685504666.5088024.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_standing_1685741178.8062696.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_standing_1685750223.3215554.txt'],
+        2: ['../../data/human_activity_recognition/indoors/lab/lab_sitting_1685505160.02395.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_sitting_1685741578.0545967.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_sitting_1685751375.4694774.txt'],
+        3: ['../../data/human_activity_recognition/indoors/lab/lab_sittingupdown_1685506366.902033.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_sittingupdown_1685741945.5226183.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_sittingupdown_1685751017.898958.txt'],
+        4: ['../../data/human_activity_recognition/indoors/lab/lab_jumping_1685508067.7758608.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_jumping_1685743199.2157178.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_jumping_1685751761.0926085.txt'],
+        5: ['../../data/human_activity_recognition/indoors/lab/lab_walking_1685507226.876064.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_walking_1685742761.396288.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_walking_1685750603.6436868.txt']
     }
 
     X_train, X_val, X_test, Y_train, Y_val, Y_test = load_data(annotations_for_files, flatten)
 
-    keras_model_folder = '../models/keras/har_final/{}'.format(identifier)
-    tflite_model_folder = '../models/tflite/har_final/{}'.format(identifier)
+    keras_model_folder = '../../models/keras/cnn/{}'.format(identifier)
+    tflite_model_folder = '../../models/tflite/cnn/{}'.format(identifier)
     model_names = [
         'har_resnet_',
         'har_resnet_1', 'har_resnet_2',
@@ -268,7 +265,10 @@ def main(identifier, flatten):
         'har_resnet_1111', 'har_resnet_2222'
     ]
     optimizations = [
-        'ptq'
+        'noopt',
+        'pruning', 'clustering', 'qat', 'ptq',
+        'cqat', 'cptq', 'pqat', 'pptq', 'pruning_clustering',
+        'pcqat', 'pcptq'
     ]
     tflite_model_sizes = []
     tflite_model_accuracies = []
@@ -302,14 +302,14 @@ def main(identifier, flatten):
             tflite_model_accuracies.append(tflite_model_accuracy)
 
     save_run_statistics(
-        '../data/tflite_stats/{}_optimizations.csv'.format(identifier),
+        '../../data/compression_results/{}.csv'.format(identifier),
         model_names, optimizations,
         tflite_model_sizes, tflite_model_accuracies
     )
 
 
 if __name__ == '__main__':
-    identifiers = ['cnn_full_int_run_3']
+    identifiers = ['cnn_run4']
     for identifier in identifiers:
         main(identifier, False)
 

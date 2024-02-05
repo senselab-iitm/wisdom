@@ -207,24 +207,24 @@ def main(annotations_for_files, model_formats, application, save_model_folder_pa
 if __name__ == '__main__':
 
     annotations_for_files = {
-        0: ['../data/human_activity_recognition/lab_empty_1685504223.572277.txt',
-            '../data/human_activity_recognition/parking_empty_1685740580.4567273.txt',
-            '../data/human_activity_recognition/corridor_empty_1685749485.6155138.txt'],
-        1: ['../data/human_activity_recognition/lab_standing_1685504666.5088024.txt',
-            '../data/human_activity_recognition/parking_standing_1685741178.8062696.txt',
-            '../data/human_activity_recognition/corridor_standing_1685750223.3215554.txt'],
-        2: ['../data/human_activity_recognition/lab_sitting_1685505160.02395.txt',
-            '../data/human_activity_recognition/parking_sitting_1685741578.0545967.txt',
-            '../data/human_activity_recognition/corridor_sitting_1685751375.4694774.txt'],
-        3: ['../data/human_activity_recognition/lab_sittingupdown_1685506366.902033.txt',
-            '../data/human_activity_recognition/parking_sittingupdown_1685741945.5226183.txt',
-            '../data/human_activity_recognition/corridor_sittingupdown_1685751017.898958.txt'],
-        4: ['../data/human_activity_recognition/lab_jumping_1685508067.7758608.txt',
-            '../data/human_activity_recognition/parking_jumping_1685743199.2157178.txt',
-            '../data/human_activity_recognition/corridor_jumping_1685751761.0926085.txt'],
-        5: ['../data/human_activity_recognition/lab_walking_fast_1685507226.876064.txt',
-            '../data/human_activity_recognition/parking_walking_fast_1685742761.396288.txt',
-            '../data/human_activity_recognition/meetingroom_walking_fast_1685750603.6436868.txt']
+        0: ['../../data/human_activity_recognition/indoors/lab/lab_empty_1685504223.572277.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_empty_1685740580.4567273.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_empty_1685749485.6155138.txt'],
+        1: ['../../data/human_activity_recognition/indoors/lab/lab_standing_1685504666.5088024.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_standing_1685741178.8062696.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_standing_1685750223.3215554.txt'],
+        2: ['../../data/human_activity_recognition/indoors/lab/lab_sitting_1685505160.02395.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_sitting_1685741578.0545967.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_sitting_1685751375.4694774.txt'],
+        3: ['../../data/human_activity_recognition/indoors/lab/lab_sittingupdown_1685506366.902033.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_sittingupdown_1685741945.5226183.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_sittingupdown_1685751017.898958.txt'],
+        4: ['../../data/human_activity_recognition/indoors/lab/lab_jumping_1685508067.7758608.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_jumping_1685743199.2157178.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_jumping_1685751761.0926085.txt'],
+        5: ['../../data/human_activity_recognition/indoors/lab/lab_walking_1685507226.876064.txt',
+            '../../data/human_activity_recognition/outdoors/parking/parking_walking_1685742761.396288.txt',
+            '../../data/human_activity_recognition/indoors/corridor/corridor_walking_1685750603.6436868.txt']
     }
 
     model_formats = [
@@ -243,6 +243,6 @@ if __name__ == '__main__':
         annotations_for_files,
         model_formats,
         'har',
-        '../../models/keras/cnn/cnn_run1',
-        '../data/har_final/cnn_run1.csv'
+        '../../models/keras/cnn/cnn_run4',
+        '../../data/train_results/cnn_run4.csv'
     )
