@@ -1,7 +1,8 @@
 ## Scripts
 
-We divide the codebase into three parts as described below.
-The scripts to each part are stored in `data_related`, `train_models` and `compress_models` respectively:
+We divide the codebase into three parts.
+The scripts for each part are stored in `data_related`, `train_models` and `compress_models` folders respectively.
+Details of each part is described below:
 
 #### Data Prepossessing and Visualization
 Here we have scripts that are used to read the ESP32 log files in the `data/human_activity_recognition` directory and compute the CSI amplitude spectrograms that are used for training the models.
@@ -14,6 +15,6 @@ It also trains the model on the data given in `data/human_activity_recognition` 
 #### Compressing Models
 These contains code that are used to compress the saved KERAS models (in `models/keras`) and convert them to TF-LITE MODEL (later saved in `models\tflite`).
 The main file is `tf_lite_convert.py` which uses TinyML optimization functions defined in file `tinyml_opt.py`, along with some utility functions defined in `tf_lite_convert_utils.py`.
-It also contains script in file `convert_tflite_to_cc.py` to convert all tflite models in a folder to C++ header files used by the sensing applications running in ESP32.
+It also contains file `convert_tflite_to_cc.py` to convert all tflite models in a folder to C++ header files used by the sensing applications running on ESP32.
 
 The details of what every function in a script does is described in the comments of that script file.
