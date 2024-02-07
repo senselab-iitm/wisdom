@@ -1,4 +1,7 @@
-from scripts.data_related import preprocess
+import sys
+sys.path.insert(1, '../data_related')
+import preprocess
+
 import tinyml_opt as opt
 
 import tensorflow as tf

@@ -1,4 +1,6 @@
-from scripts.data_related import preprocess
+import sys
+sys.path.insert(1, '../data_related')
+import preprocess
 
 import numpy as np
 import pandas as pd

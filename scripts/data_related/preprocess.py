@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from scripts.data_related import util
+import util
 
 
 '''
