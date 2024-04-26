@@ -4,7 +4,7 @@
 
 The GitHub repository only consists of the scripts. 
 The dataset and models are available publicly on <a href='https://drive.google.com/drive/u/2/folders/13Crp-owAzkjZVH85AhisW9Yfi78wsoMf'>Google Drive</a>.
-To know more about our work please read the <a href=''>workshop paper (TBA) </a> or check our <a href='http://cse.iitm.ac.in/~sense/wisdom'>project website</a>. 
+To know more about our work please read the <a href='./papers/workshop_wisdom.pdf'>workshop paper</a> or check our <a href='http://cse.iitm.ac.in/~sense/wisdom'>project website</a>. 
 To know more about the organisation of the project and how to use the datasets, models and script, please have a look at the <a href='./papers/artifact_wisdom.pdf'>artifact paper</a> or the readme files present in the different sub-folders of the project.
 
 Once you download the data and models put them inside the main `wisdom` folder i.e., wisdom will have three folder `data`, `models`, `scripts`, this will ensure the filepaths/imports in the code to work properly.
