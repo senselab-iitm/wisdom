@@ -1,6 +1,6 @@
 ## On-Device Deep Learning for IoT-based Wireless Sensing Applications
 
-[<a href='https://drive.google.com/drive/u/2/folders/1QzZPx9LiYrjlb1CArLRRkUAeOjM13ahV'>Datasets</a>] [<a href='https://drive.google.com/drive/u/2/folders/1Tzo6rNLU8OlriODip4Zmgpos7e0sL9c9'>Models</a>] [<a href=''>Workshop Paper - TBA</a>] [<a href='./papers/artifact_wisdom.pdf'>Artifact Paper</a>] [<a href='http://cse.iitm.ac.in/~sense/wisdom'>Project Website</a>]
+[<a href='https://drive.google.com/drive/u/2/folders/1QzZPx9LiYrjlb1CArLRRkUAeOjM13ahV'>Datasets</a>] [<a href='https://drive.google.com/drive/u/2/folders/1Tzo6rNLU8OlriODip4Zmgpos7e0sL9c9'>Models</a>] [<a href='./papers/workshop_wisdom.pdf'>Workshop Paper</a>] [<a href='./papers/artifact_wisdom.pdf'>Artifact Paper</a>] [<a href='http://cse.iitm.ac.in/~sense/wisdom'>Project Website</a>]
 
 The GitHub repository only consists of the scripts. 
 The dataset and models are available publicly on <a href='https://drive.google.com/drive/u/2/folders/13Crp-owAzkjZVH85AhisW9Yfi78wsoMf'>Google Drive</a>.
